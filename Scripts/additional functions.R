@@ -106,6 +106,100 @@ cols_2D=c( rgb(250,242,133, maxColorValue=255,alpha = 0.5),
 
 
 
+#function to plot pie diagrams
+stacked_pie_plot=function(habitat_matrix){
+  
+  tot=nrow(habitat_matrix)
+  hl_t=nrow(subset(habitat_matrix,habitat_matrix$humid.lowland==1& rowSums(habitat_matrix )>1))/tot*100
+  hl_s=nrow(subset(habitat_matrix,habitat_matrix$humid.lowland==1& rowSums(habitat_matrix )==1))/tot*100
+  cl_t=nrow(subset(habitat_matrix,habitat_matrix$cloud.forest==1& rowSums(habitat_matrix )>1))/tot*100
+  cl_s=nrow(subset(habitat_matrix,habitat_matrix$cloud.forest==1& rowSums(habitat_matrix )==1))/tot*100
+  tl_t=nrow(subset(habitat_matrix,habitat_matrix$humid.higland==1& rowSums(habitat_matrix )>1))/tot*100
+  tl_s=nrow(subset(habitat_matrix,habitat_matrix$humid.higland==1& rowSums(habitat_matrix )==1))/tot*100
+  Al_t=nrow(subset(habitat_matrix,habitat_matrix$paramo_puna==1& rowSums(habitat_matrix )>1))/tot*100
+  Al_s=nrow(subset(habitat_matrix,habitat_matrix$paramo_puna==1& rowSums(habitat_matrix )==1))/tot*100
+  Arm_t=nrow(subset(habitat_matrix,habitat_matrix$arid.shrubland==1& rowSums(habitat_matrix )>1))/tot*100
+  Arm_s=nrow(subset(habitat_matrix,habitat_matrix$arid.shrubland==1& rowSums(habitat_matrix )==1))/tot*100
+  
+  
+  
+  
+  habs1=data.frame(habs=rep(unique(colnames(habitat_matrix)),2),
+                   share=c(hl_t,cl_t,tl_t,Al_t,Arm_t,hl_s,cl_s,tl_s,Al_s,Arm_s),cat=c(rep("t",5),rep("s",5)))
+  
+  habs1=habs1[order(habs1$share),]
+  
+  specific_data <- habs1[order(habs1$habs,habs1$cat), ]
+  
+  habs_data <-
+    aggregate(habs1$share,
+              by = list(habs = habs1$habs),
+              FUN = sum)
+  
+  
+  habs_data$habs_colors <-  brocolors("crayons")[c("Gray","Green Blue","Midnight Blue","Yellow Orange","Burnt Orange")]
+  habs_data$labs=c("Paramo","Arid highlands","Cloud forest","Lowland rainforest","Treeline")
+  habs_data=subset(habs_data,habs_data$x>0)
+  
+  
+  
+  # adjust these as desired (currently colors all specifics the same as habs)
+  specific_data$specific_colors <-brocolors("crayons")[c("Gray","White","Green Blue","White","Midnight Blue","White","Yellow Orange","White","Burnt Orange","White")]
+  specific_data$specific_colors1 <-brocolors("crayons")[c("White","White","White","White","White","White","White","White","White","White")]
+  specific_data=subset(specific_data,specific_data$share>0)
+  
+  
+  
+  specific_data=subset(specific_data,specific_data$share>0)
+  
+  # format labels to display specific and % market share
+  specific_labels <- paste(specific_data$specific, ": ", specific_data$share, "%", sep = "")
+  
+  # coordinates for the center of the chart
+  center_x <- 0.5
+  center_y <- 0.5
+  
+  windows(11,15)
+  plot.new()
+  
+  
+  title(main=paste0(names(sort(table(habitat_matrix$category)))[3]," n= ", tot ))
+  # draw specific pie chart first
+  specific_chart <-
+    floating.pie(
+      xpos = center_x,
+      ypos = center_y,
+      x = specific_data$share,
+      radius = 0.25,
+      border = "white",
+      col = specific_data$specific_colors
+    )
+  habs_chart <-
+    floating.pie(
+      xpos = center_x,
+      ypos = center_y,
+      x = habs_data$x,
+      radius = 0.20,
+      border = "white",
+      col = habs_data$habs_colors
+    )
+  
+  
+  specific_labels <- paste(specific_data$specific_colors, ": ", specific_data$share, "%", sep = "")
+  
+  
+  pie.labels(
+    x = center_x,
+    y = center_y,
+    angles = habs_chart,
+    labels = habs_data$habs,
+    radius = 0.125,
+    bg = NULL,
+    cex = 0.8,
+    font = 2,
+    col = "black")
+}
+
 
 
 

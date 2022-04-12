@@ -1,5 +1,8 @@
 require(raster)
 require(maptools)
+require(broman)
+require(plotrix)
+require(ggplot2)
 
 source("Scripts/additional functions.R")
 
@@ -16,8 +19,6 @@ hab=read.csv("data/habitat_preferences.csv",h=T,sep=";")
 dat=read.csv("data/grid_cell_data.csv",h=T,sep=";")
 
 #Empirical richness of endemic species (Fig. 1) ----
-plot(bg_map,col="lightgray",border="lightgray",legend=F, axes=FALSE,box=FALSE)
-
 plot_data=dat
 coordinates(plot_data)=~lon+lat
 plot_data@proj4string <- crs(shape)
@@ -61,20 +62,15 @@ fisher.test(habitat_mat)
 stacked_pie_plot(habitat_old)
 stacked_pie_plot(habitat_young)
 
-
-
 #visualizing the standardized richness of young and old endemic species using 2D colors (figure 2) ----
-df=plot2d(data=dat,vec1="r_st_young", vec2="r_st_old", lon="lon", lat="lat",choose_cols = cols_2D,pix=0.02)    
+sub=subset(dat,dat$r_st_young>0.5| dat$r_st_old >0.5)
+df=plot2d(data=sub,vec1="r_st_young", vec2="r_st_old", lon="lon", lat="lat",choose_cols = cols_2D,pix=0.02)    
 
 #plotting results producing Figure 2
 plot(bg_map,col="lightgray",border="lightgray",legend=F, axes=FALSE,box=FALSE)
 plotRGB(df[[1]],r=1,g=2,b=3,colNA='NA',bgalpha=0,add=T)
 plot(shape,add=T,border="gray40")
 
-
-plot(bg_map,col="lightgray",border="lightgray",legend=F, axes=FALSE,box=FALSE)
-plotRGB(df[[1]],r=1,g=2,b=3,colNA='NA',bgalpha=0,add=T)
-plot(shape2,add=T,border="gray40")
 
 #plotting legend of Figure 2
 fig_2_legend=df[[2]]
