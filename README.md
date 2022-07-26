@@ -1,3 +1,3 @@
-# hum-ex-coex-col
- Supplementary data and R code for the paper: "Extinction, coextinction, and colonization affecting plant-hummingbird networks under climate change"
+# Hummingbird-cradles-and-museums
+ Supplementary data and R code for the paper: "Biodiversity cradles and museums segregating within hotspots of endemism"
 
